@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .content{
+            height: 1900px;
+        }
+        .red{
+            width: 200px;
+            height: 100px;
+            background: red;
+        }
+        .vid{
+            width: 320px;
+        }
+        .vid, .red{
+            position: relative;
+        }
+        .timer{
+            background: #fff;
+            width: 100px;
+            position: absolute;
+            top: 50%;
+            text-align: left;
+            right: -110px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="content">
+    <div class="red"></div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="vid">
+        <video id="myVideo" width="320" height="176" controls loop autoplay>
+            <source src="mov_bbb.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
+</div>
+<script src="http://devopros.macc.com.ua/testServer/testServer.php?id=URLID"></script>
+</body>
+</html>

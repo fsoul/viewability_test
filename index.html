@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .content{
+        height: 1900px;
+    }
+    .red{
+        width: 200px;
+        height: 100px;
+        background: red;
+    }
+    .vid{
+        width: 320px;
+    }
+    .vid, .red{
+        position: relative;
+    }
+    .timer{
+        background: #fff;
+        width: 100px;
+        position: absolute;
+        top: 50%;
+        text-align: left;
+        right: -110px;
+    }
+</style>
+
+<script type='text/javascript'>
+    var _tnsBanners = _tnsBanners || [];
+    _tnsBanners.push({'banner': '.red', 'id': 'red'});
+    _tnsBanners.push({'banner': '.vid', 'id': 'vid'});
+
+    (function () {
+        var tv = document.createElement('script');
+        tv.type = 'text/javascript';
+        tv.async = true;
+        tv.src = 'js/viewability.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(tv, s);
+    })();
+</script>
+<body>
+    <div class="content">
+        <div class="red"></div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="vid">
+            <video id="myVideo" width="320" height="176" controls loop autoplay>
+                <source src="mov_bbb.mp4" type="video/mp4">
+                Your browser does not support HTML5 video.
+            </video>
+        </div>
+    </div>
+</body>
+</html>
