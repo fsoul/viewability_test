@@ -1,7 +1,19 @@
 (function () {
     "use strict";
 
-    var Timer = function (delay = 100, targetTime = 2000, callback=null) {
+    var Timer = function (delay, targetTime, callback) {
+        if (typeof delay === 'undefined') {
+            delay = 100;
+        }
+
+        if (typeof targetTime === 'undefined') {
+            targetTime = 2000;
+        }
+
+        if (typeof callback === 'undefined') {
+            callback = null;
+        }
+
         this.init(delay, targetTime, callback);
     };
 
@@ -52,7 +64,12 @@
         }
     };
 
-    var TNSViewability = function (conf = {}) {
+    var TNSViewability = function (conf) {
+
+        if (typeof conf === 'undefined') {
+            conf = {};
+        }
+
         var viewableOn = 0.5;
         var timePrecisionMs = 100;
         var videoTimePrecisionMs = 100;
@@ -160,11 +177,12 @@
 
         function isVideo(banner){
             var video = banner.getElementsByTagName("video");
-            var isVideo = video.length > 0;
-            return isVideo;
+            return video.length > 0;
         }
 
-        function addBanner(banner, bannerId=-1) {
+        function addBanner(banner, bannerId) {
+            bannerId = bannerId || -1;
+
             if (banner) {
                 if (!banner[tnsTimer]) {
                     if(isVideo(banner)){
@@ -180,11 +198,11 @@
                     banner[tnsTimer].clean();
                 }
                 // unique only
-                if (banners.indexOf(banner) == -1) {
+                if (banners.indexOf(banner) === -1) {
                     banners.push(banner);
                 }
                 // backward compatibility
-                if (typeof bannerId == 'number' && bannerId == -1) {
+                if (typeof bannerId === 'number' && bannerId === -1) {
                     bannerId = banners.indexOf(banner);
                 }
                 banner[tnsBannerId] = bannerId;
@@ -221,7 +239,9 @@
             return index !== -1;
         }
 
-        function isViewable(element, offset = 0) {
+        function isViewable(element, offset) {
+
+            offset = offset || 0;
             // Do nothing when there is no element selected
             if (!element) {
                 return false;
@@ -335,11 +355,7 @@
         }
 
         function checkViewabilitySupport() {
-            var support = 1;
-            if (inIframe() || isBodyHeight100()) {
-                support = 0;
-            }
-            return support;
+            return inIframe() ? 0 : 1;
         }
 
         function getCookieID() {
@@ -352,7 +368,11 @@
             return cookie;
         }
 
-        function sendPOST(url, data, convertToString = true) {
+        function sendPOST(url, data, convertToString) {
+            if (typeof convertToString === 'undefined') {
+                convertToString = true;
+            }
+
             if (!url) {
                 console.log('sendPOST: url is empty');
                 return false;
@@ -362,7 +382,7 @@
                 return false;
             }
             data['cookie'] = getCookieID();
-            if (convertToString && typeof data != 'string') {
+            if (convertToString && typeof data !== 'string') {
                 data = JSON.stringify(data);
             }
             console.log(data);
@@ -390,7 +410,7 @@
             'addBanner': function (o, bannerId) {
                 if (o) {
                     var banner = o;
-                    if (typeof o == 'string') {
+                    if (typeof o === 'string') {
                         banner = document.querySelector(o);
                     }
                     if (banner instanceof HTMLElement) {
