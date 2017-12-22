@@ -15,6 +15,12 @@
         }
 
         this.init(delay, targetTime, callback);
+
+        var self = this;
+
+        document.addEventListener(this.visibilityChange, function () {
+            self.handleVisibilityChange();
+        }, false);
     };
 
     Timer.prototype = {
@@ -26,6 +32,20 @@
             this._targetTime = targetTime;
             this._callback = callback;
             this._viewability = 0;
+            this.hidden = '';
+            this.visibilityChange = '';
+
+
+            if (typeof document.hidden !== 'undefined') {
+                this.hidden = 'hidden';
+                this.visibilityChange = 'visibilitychange';
+            } else if (document.msHidden !== 'undefined') {
+                this.hidden = 'msHidden';
+                this.visibilityChange = 'msvisibilitychange';
+            } else if (document.webkitHidden !== 'undefined') {
+                this.hidden = 'webkitHidden';
+                this.visibilityChange = 'webkitvisibilitychange';
+            }
         },
         start: function () {
             if (!this._isRunning) {
@@ -35,7 +55,8 @@
                     self._viewability += self._delay;
                     if (self._viewability >= self._targetTime) {
                         self._targetTime = Number.MAX_VALUE;
-                        if (self._callback) {
+
+                        if (typeof self._callback === 'function') {
                             self._callback();
                         }
                     }
@@ -50,25 +71,34 @@
                 this._isRunning = false;
             }
         },
+
         clean: function () {
             clearInterval(this._interval);
             this._time = 0;
             this._viewability = 0;
             this._isRunning = false;
         },
+
         time: function () {
             return this._time;
         },
+
         status: function () {
             return this._isRunning ? 'running' : 'paused';
+        },
+
+        handleVisibilityChange: function () {
+            if (document[this.hidden]) {
+                this.pause();
+            } else {
+                this.start();
+            }
         }
     };
 
     var TNSViewability = function (conf) {
 
-        if (typeof conf === 'undefined') {
-            conf = {};
-        }
+        conf = typeof conf === 'undefined' ? {} : conf;
 
         var viewableOn = 0.5;
         var timePrecisionMs = 100;
@@ -180,20 +210,21 @@
             return video.length > 0;
         }
 
+        function initTimer(banner) {
+            var precision = isVideo(banner) ? videoTimePrecisionMs: timePrecisionMs;
+            var timeToViewability = isVideo(banner) ? videoTimeToViewabilityMs: timeToViewabilityMs;
+
+            return new Timer(precision, timeToViewability, function () {
+                sendStat(banner);
+            });
+        }
+
         function addBanner(banner, bannerId) {
-            bannerId = bannerId || -1;
+            bannerId = typeof bannerId !== 'undefined' ? bannerId : -1;
 
             if (banner) {
                 if (!banner[tnsTimer]) {
-                    if(isVideo(banner)){
-                        banner[tnsTimer] = new Timer(videoTimePrecisionMs, videoTimeToViewabilityMs, function () {
-                            sendStat(banner);
-                        });
-                    }else{
-                        banner[tnsTimer] = new Timer(timePrecisionMs, timeToViewabilityMs, function () {
-                            sendStat(banner);
-                        });
-                    }
+                    banner[tnsTimer] = initTimer(banner);
                 } else {
                     banner[tnsTimer].clean();
                 }
