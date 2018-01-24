@@ -15,12 +15,6 @@
         }
 
         this.init(delay, targetTime, callback);
-
-        var self = this;
-
-        document.addEventListener(this.visibilityChange, function () {
-            self.handleVisibilityChange();
-        }, false);
     };
 
     Timer.prototype = {
@@ -32,20 +26,7 @@
             this._targetTime = targetTime;
             this._callback = callback;
             this._viewability = 0;
-            this.hidden = '';
-            this.visibilityChange = '';
 
-
-            if (typeof document.hidden !== 'undefined') {
-                this.hidden = 'hidden';
-                this.visibilityChange = 'visibilitychange';
-            } else if (document.msHidden !== 'undefined') {
-                this.hidden = 'msHidden';
-                this.visibilityChange = 'msvisibilitychange';
-            } else if (document.webkitHidden !== 'undefined') {
-                this.hidden = 'webkitHidden';
-                this.visibilityChange = 'webkitvisibilitychange';
-            }
         },
         start: function () {
             if (!this._isRunning) {
@@ -85,14 +66,6 @@
 
         status: function () {
             return this._isRunning ? 'running' : 'paused';
-        },
-
-        handleVisibilityChange: function () {
-            if (document[this.hidden]) {
-                this.pause();
-            } else {
-                this.start();
-            }
         }
     };
 
@@ -132,6 +105,21 @@
 
         var banners = [];
 
+        var hidden = '';
+        var visibilityChange = '';
+
+
+        if (typeof document.hidden !== 'undefined') {
+            hidden = 'hidden';
+            visibilityChange = 'visibilitychange';
+        } else if (document.msHidden !== 'undefined') {
+            hidden = 'msHidden';
+            visibilityChange = 'msvisibilitychange';
+        } else if (document.webkitHidden !== 'undefined') {
+            hidden = 'webkitHidden';
+            visibilityChange = 'webkitvisibilitychange';
+        }
+
         function init() {
             // TODO: check 'load'
             document.addEventListener('DOMContentLoaded', function () {
@@ -151,8 +139,8 @@
                 window.onbeforeunload = sendUnloadStat;
             }
 
-            document.addEventListener('visibilitychange', function () {
-                if (document['hidden']) {
+            document.addEventListener(visibilityChange, function () {
+                if (document[hidden]) {
                     var endTime = new Date();
                     spentTime += endTime - startTime;
                     pauseAll();
